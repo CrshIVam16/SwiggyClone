@@ -1,7 +1,9 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeftStroke, ArrowRightStroke, Search, StarCircle } from '@boxicons/react';
+import { ArrowLeftStroke, ArrowRightStroke, ChevronDown, ChevronUp, Search, StarCircle, Star } from '@boxicons/react';
+// import fetch from 'node-fetch';
+// import { HttpsProxyAgent } from 'https-proxy-agent';
 
 
 function RestaurantMenu() {
@@ -17,6 +19,10 @@ function RestaurantMenu() {
     const [restaurantData, setRestaurantData] = useState([])
     const [discountData, setDiscountData] = useState([])
     const [value, setValue] = useState(0)
+
+    //** for dependent dropdowns */ 
+    // const [currentIndex, setCurrentIndex] = useState(null) // no dropdown will be open
+    // const [currentIndex, setCurrentIndex] = useState(0) // first dropdown will be open by default
 
 
     // async function fetchMenu() {
@@ -34,6 +40,8 @@ function RestaurantMenu() {
     // }
 
     async function fetchMenu() {
+        // const response = await fetch(`https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.8373&lng=80.9165&restaurantId=${mainId}&catalog_qa=undefined&submitAction=ENTER`);
+
         const response = await fetch("/menu.json");
         const result = await response.json();
 
@@ -45,8 +53,10 @@ function RestaurantMenu() {
         setDiscountData(cards[3]?.card?.card?.gridElements?.infoWithStyle?.offers || []);
         // setMenuData(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.[1]?.card?.card?.itemCards || []);
         // console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards)
-        let actualMenu = (cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter((data) => (data?.card?.card?.itemCards))
+        let actualMenu = (cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter((data) => (data?.card?.card?.itemCards) || (data?.card?.card?.categories))
         setMenuData(actualMenu);
+        console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[0]);
+
     }
 
 
@@ -61,6 +71,10 @@ function RestaurantMenu() {
             return
         setValue((prev) => prev + 100)
         // console.log(value);
+    }
+
+    function toggle(i) {
+        setCurrentIndex(i === currentIndex ? null : i)
     }
 
     useEffect(() => {
@@ -159,14 +173,144 @@ function RestaurantMenu() {
                     <Search />
                 </div>
 
-                <div className='w-full border'>
+                {/* <div className='w-full border'>
                     {
-                        menuData.map(({ card: { card: { itemCards, title } } }) => (
-                            <h1>{title} {itemCards.length}</h1>
+                        menuData.map(({ card: { card: { itemCards, title } } }, i) => (
+                            <div>
+                                <div className='flex border justify-between'>
+                                    <h1>{title} {itemCards.length}</h1>
+                                    <ChevronUp onClick={() => toggle(i)} />
+                                </div>
+                                
+                              { currentIndex==i &&
+                                  <div className='m-4'>
+                                    {
+                                        itemCards.map(({ card: { info } }) => (
+                                            <h1>{info.name}</h1>
+                                        ))
+                                    }
+                                </div>
+                              }
+                            </div>
+                        ))
+                    }
+                </div> */}
+
+                <div className='w-full p-2'>
+                    {
+                        menuData.map(({ card: { card } }, i) => (
+                            <MenuCard card={card} />
                         ))
                     }
                 </div>
             </div>
+        </div>
+    )
+}
+
+function MenuCard({ card }) {
+
+    let check = false;
+    if (card['@type']) {
+        check = true;
+    }
+
+    const [isOpen, setIsOpen] = useState(check);
+
+    function toggleDropDown() {
+        setIsOpen((prev) => !prev)
+    }
+
+    if (card.itemCards) {
+        const { title, itemCards } = card;
+        return (
+            <div>
+                <div className='flex justify-between mt-4'>
+                    <h1 className={'font-bold text-' + (card['@type'] ? "lg" : "base")}>{title} ({itemCards.length})</h1>
+                    {isOpen ? (<ChevronUp onClick={toggleDropDown} />) : (<ChevronDown onClick={toggleDropDown} />)}
+                </div>
+                {
+                    isOpen && <DetailMenu itemCards={itemCards} />
+                }
+                <hr className={'my-5 text-slate-300/50 border-' + (card['@type'] ? "5" : "1")} />
+            </div >
+        )
+    }
+    else {
+        const { title, categories } = card;
+        return (
+            <div>
+                <h1 className='font-bold text-[18px]'>{card.title}</h1>
+                {
+                    categories.map((data) => (
+                        <MenuCard card={data} />
+                    ))
+                }
+                {/* <hr /> */}
+            </div >
+        )
+    }
+}
+
+function DetailMenu({ itemCards }) {
+
+    let veg = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.clipartmax.com%2Fpng%2Fmiddle%2F299-2998556_vegetarian-food-symbol-icon-non-veg-symbol-png.png&f=1&nofb=1&ipt=7b3936f0ac325863f9364bf749c4808add8b8129212b4e79d2f6d4c62407cb26"
+
+    let nonVeg = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flistimg.pinclipart.com%2Fpicdir%2Fs%2F419-4194820_veg-icon-png-non-veg-logo-png-clipart.png&f=1&nofb=1&ipt=13908b280875dff4299cc843bab719ec0040d5a2a5162b450648858cea432443"
+
+    return (
+        <div className='my-4 min-h-[182px]'>
+            {console.log(itemCards)}
+            {
+                itemCards.map(({ card: {
+                    info: {
+                        name,
+                        price,
+                        defaultPrice,
+                        description = "",
+                        imageId,
+                        itemAttribute: { vegClassifier },
+                        ratings: { aggregatedRating: { rating, ratingCountV2 } }
+                    } } }) => {
+                    const [isMore, setIsMore] = useState(false);
+                    let trimDesc = description.substring(0, 130) + ". . .";
+                    return (
+
+                        <>
+                            <div className='w-full flex justify-between py-5'>
+
+                                <div className='w-[70%] flex flex-col justify-between'>
+
+                                    <img className='w-4' src={(vegClassifier === "VEG" ? veg : nonVeg)} alt="" />
+                                    {/* <p>{vegClassifier}</p> */}
+                                    <h2 className='font-bold text-lg text-black/70'>{name}</h2>
+                                    <p className='font-semibold text-sm'>₹ {price ? price / 100 : defaultPrice / 100}</p>
+
+                                    <div className='flex flex-col gap-2 py-1'>
+                                        {
+                                            rating && <div className='flex text-xs font-bold'>
+                                                <Star pack="filled" className='text-green-500 w-4 h-4 mr-1' />
+                                                <span>{rating} </span>
+                                                <span className='text-gray-500'>({ratingCountV2})</span>
+                                            </div>
+                                        }
+                                        {description.length > 130 ? <div>
+                                            <span className='text-gray-500 font-semibold text-[16px]'>{isMore ? description : trimDesc}</span>
+                                            <button className='text-gray-500 font-bold text-[16px]' onClick={() => setIsMore(!isMore)}>{isMore ? "less" : "more"}</button>
+                                        </div> : <span className='text-gray-500 font-semibold text-[16px]'>{description}</span>}
+                                    </div>
+                                </div>
+
+                                <div className='w-[20%] relative h-full'>
+                                    <img className='rounded-xl aspect-square object-cover' src={`https://media-assets.swiggy.com/swiggy/image/upload/${imageId}`} alt="" />
+                                    <button className='py-2 px-10 rounded-xl bg-white drop-shadow text-green-400 text-lg font-bold absolute -bottom-5 left-5'>ADD</button>
+                                </div>
+                            </div>
+                            <hr className='my-4' />
+                        </>
+                    )
+                })
+            }
         </div>
     )
 }
