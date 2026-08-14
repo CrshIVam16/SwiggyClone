@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { ArrowLeftStroke, ArrowRightStroke } from '@boxicons/react'
 
-function Mind({ data }) {
+function Mind({data}) {
 
     // const [data, setData] = useState([])
 
     const [value, setValue] = useState(0)
+    // console.log(data);
 
     // async function fetchData() {
-    //     const response = await fetch("https://cors-by-codethread-for-swiggy.vercel.app/cors/dapi/restaurants/list/v5?lat=28.5355161&lng=77.3910265&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
+    //     const response = await fetch("https://cors-by-codethread-for-swiggy.vercel.app/cors/dapi/restaurants/list/v5?lat=26.953975&lng=80.985831&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
     //     const result = await response.json()
+    //     console.log(result);
 
     //     const val = result?.data?.cards[0]?.card?.card?.imageGridCards?.info
-    //     console.log(val);
-    //     setData(val)
+    //     // console.log(val);
+    //     setData(val||[])
     // }
 
     // useEffect(() => {

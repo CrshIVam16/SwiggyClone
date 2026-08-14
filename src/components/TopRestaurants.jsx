@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ArrowLeftStroke, ArrowRightStroke } from '@boxicons/react'
 import RestaurantsCards from './RestaurantsCards'
 
-function TopRestaurants({ data }) {
+function TopRestaurants({ data, title }) {
 
     // const [data, setData] = useState([])
     // console.log(data);
@@ -39,7 +39,7 @@ function TopRestaurants({ data }) {
     return (
         <>
             <div className='w-[78%] flex justify-between items-end'>
-                <h1 className="text-2xl font-bold mt-10">Top restaurant chains in Lucknow</h1>
+                <h1 className="text-2xl font-bold mt-10">{title}</h1>
                 <div className='flex gap-5'>
                     <ArrowLeftStroke onClick={handlePrev} className={`w-8 h-8 rounded-2xl cursor-pointer ` + (value === 0 ? "bg-gray-200 text-gray-400" : "bg-gray-300")} />
                     <ArrowRightStroke onClick={handleNext} className={`w-8 h-8 bg-gray-300 rounded-2xl cursor-pointer ` + (value > 420 ? "bg-gray-200 text-gray-400" : "bg-gray-300")} />

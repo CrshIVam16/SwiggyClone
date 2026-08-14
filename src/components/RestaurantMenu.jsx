@@ -55,7 +55,7 @@ function RestaurantMenu() {
         // console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards)
         let actualMenu = (cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter((data) => (data?.card?.card?.itemCards) || (data?.card?.card?.categories))
         setMenuData(actualMenu);
-        console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[0]);
+        // console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[0]);
 
     }
 
