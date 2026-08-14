@@ -1,7 +1,7 @@
-import React from 'react'
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeftStroke, ArrowRightStroke, ChevronDown, ChevronUp, Search, StarCircle, Star } from '@boxicons/react';
+import { CartContext } from '../context/contextApi';
 // import fetch from 'node-fetch';
 // import { HttpsProxyAgent } from 'https-proxy-agent';
 
@@ -259,11 +259,11 @@ function DetailMenu({ itemCards }) {
     let nonVeg = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flistimg.pinclipart.com%2Fpicdir%2Fs%2F419-4194820_veg-icon-png-non-veg-logo-png-clipart.png&f=1&nofb=1&ipt=13908b280875dff4299cc843bab719ec0040d5a2a5162b450648858cea432443"
 
     return (
-        <div className='my-4 min-h-[182px]'>
-            {console.log(itemCards)}
+        <div className='my-4 min-h-45.5'>
+
             {
-                itemCards.map(({ card: {
-                    info: {
+                itemCards.map(({ card: { info } }) => {
+                    const {
                         name,
                         price,
                         defaultPrice,
@@ -271,9 +271,24 @@ function DetailMenu({ itemCards }) {
                         imageId,
                         itemAttribute: { vegClassifier },
                         ratings: { aggregatedRating: { rating, ratingCountV2 } }
-                    } } }) => {
+                    } = info;
+
+                    const { cartData, setCartData } = useContext(CartContext);
+
                     const [isMore, setIsMore] = useState(false);
                     let trimDesc = description.substring(0, 130) + ". . .";
+
+                    function handleAddToCart() {
+                        const isAdded = cartData.find((data) => data.id === info.id)
+                        if (!isAdded) {
+                            setCartData(prev => [...prev, info]);
+                            localStorage.setItem("cartData", JSON.stringify([...cartData, info]))
+                        }
+                        else {
+                            alert("Already Added...")
+                        }
+                        // console.log(info);
+                    }
                     return (
 
                         <>
@@ -303,7 +318,7 @@ function DetailMenu({ itemCards }) {
 
                                 <div className='w-[20%] relative h-full'>
                                     <img className='rounded-xl aspect-square object-cover' src={`https://media-assets.swiggy.com/swiggy/image/upload/${imageId}`} alt="" />
-                                    <button className='py-2 px-10 rounded-xl bg-white drop-shadow text-green-400 text-lg font-bold absolute -bottom-5 left-5'>ADD</button>
+                                    <button onClick={handleAddToCart} className='py-2 px-10 rounded-xl bg-white drop-shadow text-green-400 text-lg font-bold absolute -bottom-5 left-5 cursor-pointer'>ADD</button>
                                 </div>
                             </div>
                             <hr className='my-4' />

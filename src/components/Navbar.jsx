@@ -1,13 +1,14 @@
 import React, { useContext, useState } from 'react'
 import { Outlet, Link } from 'react-router-dom';
 import { CartPlus, ChevronDown, Discount, Handshake, Search, Shopify, ShoppingBag, User, X, Location } from '@boxicons/react';
-import { Visibility } from '../context/contextApi';
+import { CartContext, Visibility } from '../context/contextApi';
 
 function Navbar() {
 
     // const [visible, setVisible] = useState(false);
 
     const { visible, setVisible } = useContext(Visibility);
+    const { cartData, setCartData } = useContext(CartContext);
     const [searchResult, setSearchResult] = useState([]);
 
     const dishes = [
@@ -200,7 +201,7 @@ function Navbar() {
                 <div onClick={handleVisibility} className={'w-full min-h-full bg-black/50 absolute z-30 ' + (visible ? "visible" : "invisible")}></div>
                 <div className={'w-[40%] h-full bg-white absolute p-5 z-50 duration-500 ' + (visible ? "left-0" : "-left-full")}>
                     <div className='flex flex-col gap-5 w-[65%] absolute right-0 p-5'>
-                        <p className='p-5 w-20' onClick={handleVisibility}><X /></p>
+                        <p className='p-5 w-20 cursor-pointer' onClick={handleVisibility}><X /></p>
                         <input type="text" className='border border-gray-400 w-full p-5 focus:outline-none shadow-lg' onChange={(e) => searchResultFun(e.target.value)} />
                         <div>
                             <ul>
@@ -253,7 +254,11 @@ function Navbar() {
                             <Link to={path} key={id}>
                                 <p className="flex text-gray-600 gap-1">
                                     {image} {name}
+                                    {name === "Cart" &&
+                                        <span>{cartData.length}</span>
+                                    }
                                 </p>
+
                             </Link>
                         ))}
                     </div>
