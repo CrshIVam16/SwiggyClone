@@ -2,14 +2,23 @@ import React, { useContext, useState } from 'react'
 import { Outlet, Link } from 'react-router-dom';
 import { CartPlus, ChevronDown, Discount, Handshake, Search, Shopify, ShoppingBag, User, X, Location } from '@boxicons/react';
 import { CartContext, Visibility } from '../context/contextApi';
+import { useDispatch, useSelector } from 'react-redux'
+import { toggleSearchBar } from '../utils/toggleSlice';
 
 function Navbar() {
 
     // const [visible, setVisible] = useState(false);
 
-    const { visible, setVisible } = useContext(Visibility);
-    const { cartData, setCartData } = useContext(CartContext);
+    // const { visible, setVisible } = useContext(Visibility);
+
+    // access data form redux store using useSelector
+    const visible = useSelector((state) => state.toggleSlice.searchBarToggle)
+    const dispatch = useDispatch()
+
+    // const { cartData, setCartData } = useContext(CartContext);
+    const cartData = useSelector((state) => state.cartSlice.cartItems)
     const [searchResult, setSearchResult] = useState([]);
+
 
     const dishes = [
         {
@@ -182,7 +191,8 @@ function Navbar() {
     }
 
     function handleVisibility() {
-        setVisible(prev => !prev)
+        // setVisible(prev => !prev)
+        dispatch(toggleSearchBar())
     }
 
     async function searchResultFun(val) {

@@ -1,11 +1,16 @@
 import { useContext } from "react"
 import { CartContext } from "../context/contextApi"
 import { Link } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux";
+import { deleteItem, clearCart } from "../utils/cartSlice";
 
 function Cart() {
 
-    const { cartData, setCartData } = useContext(CartContext)
-    console.log(cartData)
+    // const { cartData, setCartData } = useContext(CartContext)
+    // console.log(cartData)
+
+    const cartData = useSelector((state) => state.cartSlice.cartItems)
+    const dispatch = useDispatch()
 
     let totalPrice = 0;
     // for (let i = 0; i < cartData.length; i++) {
@@ -18,8 +23,9 @@ function Cart() {
         if (cartData.length > 1) {
             let newArr = [...cartData]
             newArr.splice(i, 1);
-            setCartData(newArr)
-            localStorage.setItem("cartData", JSON.stringify(newArr))
+            // setCartData(newArr)
+            dispatch(deleteItem(newArr))
+            // localStorage.setItem("cartData", JSON.stringify(newArr))
         }
         else {
             handleClearCart()
@@ -27,9 +33,10 @@ function Cart() {
     }
 
     function handleClearCart() {
-        setCartData([])
+        dispatch(clearCart())
+        // setCartData([])
         // localStorage.setItem("cartData", JSON.stringify([])) // or below one
-        localStorage.clear() // should be used when nothing needs to be remained like any credentials or something like that 
+        // localStorage.clear() // should be used when nothing needs to be remained like any credentials or something like that 
     }
 
     if (cartData.length === 0) {

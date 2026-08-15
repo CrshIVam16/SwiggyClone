@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeftStroke, ArrowRightStroke, ChevronDown, ChevronUp, Search, StarCircle, Star } from '@boxicons/react';
 import { CartContext } from '../context/contextApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../utils/cartSlice';
 // import fetch from 'node-fetch';
 // import { HttpsProxyAgent } from 'https-proxy-agent';
 
@@ -275,7 +277,10 @@ function DetailMenu({ itemCards, restaurantData }) {
                     // console.log(info);
 
 
-                    const { cartData, setCartData } = useContext(CartContext);
+                    // const { cartData, setCartData } = useContext(CartContext);
+                    const cartData = useSelector((state) => state.cartSlice.cartItems)
+                    const getRestaurantDataFromStorage = useSelector((state) => state.cartSlice.restaurantData)
+                    const dispatch = useDispatch()
 
                     const [isMore, setIsMore] = useState(false);
                     let trimDesc = description.substring(0, 130) + ". . .";
@@ -284,14 +289,15 @@ function DetailMenu({ itemCards, restaurantData }) {
                         // console.log(restaurantData);
 
                         const isAdded = cartData.find((data) => data.id === info.id)
-                        let getRestaurantDataFromStorage = JSON.parse(localStorage.getItem("restaurantData")) || []
-                        console.log(getRestaurantDataFromStorage);
+                        // let getRestaurantDataFromStorage = JSON.parse(localStorage.getItem("restaurantData")) || []
+                        // console.log(getRestaurantDataFromStorage);
 
                         if (!isAdded) {
-                            if (getRestaurantDataFromStorage.name === restaurantData.name || getRestaurantDataFromStorage.length === 0) {
-                                setCartData(prev => [...prev, info]);
-                                localStorage.setItem("cartData", JSON.stringify([...cartData, info]))
-                                localStorage.setItem("restaurantData", JSON.stringify(restaurantData))
+                            if (getRestaurantDataFromStorage?.name === restaurantData?.name || getRestaurantDataFromStorage.length === 0) {
+                                // setCartData(prev => [...prev, info]);
+                                // localStorage.setItem("cartData", JSON.stringify([...cartData, info]))
+                                // localStorage.setItem("restaurantData", JSON.stringify(restaurantData))
+                                dispatch(addToCart({ info, restaurantData }))
                             }
                             else {
                                 alert("Different Restaurant item")
