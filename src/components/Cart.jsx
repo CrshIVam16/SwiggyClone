@@ -5,13 +5,31 @@ import { Link } from "react-router-dom"
 function Cart() {
 
     const { cartData, setCartData } = useContext(CartContext)
-    // console.log(cartData)
+    console.log(cartData)
+
+    let totalPrice = 0;
+    // for (let i = 0; i < cartData.length; i++) {
+    //     totalPrice = totalPrice + (cartData[i].price) / 100 || (cartData[i].defaultPrice) / 100;
+    // }
+
+    totalPrice = cartData.reduce((acc, currVal) => acc + (currVal.price) / 100 || (currVal.defaultPrice) / 100, 0)
 
     function handleRemoveFromCart(i) {
-        let newArr = [...cartData]
-        newArr.splice(i, 1);
-        setCartData(newArr)
-        localStorage.setItem("cartData", JSON.stringify(newArr))
+        if (cartData.length > 1) {
+            let newArr = [...cartData]
+            newArr.splice(i, 1);
+            setCartData(newArr)
+            localStorage.setItem("cartData", JSON.stringify(newArr))
+        }
+        else {
+            handleClearCart()
+        }
+    }
+
+    function handleClearCart() {
+        setCartData([])
+        // localStorage.setItem("cartData", JSON.stringify([])) // or below one
+        localStorage.clear() // should be used when nothing needs to be remained like any credentials or something like that 
     }
 
     if (cartData.length === 0) {
@@ -31,7 +49,10 @@ function Cart() {
                 {
                     cartData.map((data, i) => (
                         <div className="w-full flex justify-between items-center my-5 p-5">
-                            <h2 className="text-2xl font-semibold">{data.name}</h2>
+                            <div className="flex flex-col gap-5">
+                                <h2 className="text-2xl font-semibold">{data.name}</h2>
+                                <h2>₹{(data.price) / 100 || (data.defaultPrice) / 100}</h2>
+                            </div>
                             <div className='w-[20%] relative h-full'>
                                 <img className='rounded-xl aspect-square object-cover' src={`https://media-assets.swiggy.com/swiggy/image/upload/${data.imageId}`} alt="" />
                                 <button onClick={() => handleRemoveFromCart(i)} className='py-2 px-8 rounded-xl bg-red-500 drop-shadow text-white text-base font-bold absolute -bottom-4 left-2 cursor-pointer'>REMOVE</button>
@@ -39,6 +60,8 @@ function Cart() {
                         </div>
                     ))
                 }
+                <h1>Total : ₹{totalPrice}</h1>
+                <button onClick={handleClearCart} className="px-8 py-3 bg-red-400 text-white font-semibold rounded-xl cursor-pointer">Clear All</button>
             </div>
         </div>
     )

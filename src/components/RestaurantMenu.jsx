@@ -199,7 +199,7 @@ function RestaurantMenu() {
                 <div className='w-full p-2'>
                     {
                         menuData.map(({ card: { card } }, i) => (
-                            <MenuCard card={card} />
+                            <MenuCard card={card} restaurantData={restaurantData} />
                         ))
                     }
                 </div>
@@ -208,7 +208,7 @@ function RestaurantMenu() {
     )
 }
 
-function MenuCard({ card }) {
+function MenuCard({ card, restaurantData }) {
 
     let check = false;
     if (card['@type']) {
@@ -230,7 +230,7 @@ function MenuCard({ card }) {
                     {isOpen ? (<ChevronUp onClick={toggleDropDown} />) : (<ChevronDown onClick={toggleDropDown} />)}
                 </div>
                 {
-                    isOpen && <DetailMenu itemCards={itemCards} />
+                    isOpen && <DetailMenu itemCards={itemCards} restaurantData={restaurantData} />
                 }
                 <hr className={'my-5 text-slate-300/50 border-' + (card['@type'] ? "5" : "1")} />
             </div >
@@ -243,7 +243,7 @@ function MenuCard({ card }) {
                 <h1 className='font-bold text-[18px]'>{card.title}</h1>
                 {
                     categories.map((data) => (
-                        <MenuCard card={data} />
+                        <MenuCard card={data} restaurantData={restaurantData} />
                     ))
                 }
                 {/* <hr /> */}
@@ -252,7 +252,7 @@ function MenuCard({ card }) {
     }
 }
 
-function DetailMenu({ itemCards }) {
+function DetailMenu({ itemCards, restaurantData }) {
 
     let veg = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.clipartmax.com%2Fpng%2Fmiddle%2F299-2998556_vegetarian-food-symbol-icon-non-veg-symbol-png.png&f=1&nofb=1&ipt=7b3936f0ac325863f9364bf749c4808add8b8129212b4e79d2f6d4c62407cb26"
 
@@ -272,6 +272,8 @@ function DetailMenu({ itemCards }) {
                         itemAttribute: { vegClassifier },
                         ratings: { aggregatedRating: { rating, ratingCountV2 } }
                     } = info;
+                    // console.log(info);
+
 
                     const { cartData, setCartData } = useContext(CartContext);
 
@@ -279,10 +281,22 @@ function DetailMenu({ itemCards }) {
                     let trimDesc = description.substring(0, 130) + ". . .";
 
                     function handleAddToCart() {
+                        // console.log(restaurantData);
+
                         const isAdded = cartData.find((data) => data.id === info.id)
+                        let getRestaurantDataFromStorage = JSON.parse(localStorage.getItem("restaurantData")) || []
+                        console.log(getRestaurantDataFromStorage);
+
                         if (!isAdded) {
-                            setCartData(prev => [...prev, info]);
-                            localStorage.setItem("cartData", JSON.stringify([...cartData, info]))
+                            if (getRestaurantDataFromStorage.name === restaurantData.name || getRestaurantDataFromStorage.length === 0) {
+                                setCartData(prev => [...prev, info]);
+                                localStorage.setItem("cartData", JSON.stringify([...cartData, info]))
+                                localStorage.setItem("restaurantData", JSON.stringify(restaurantData))
+                            }
+                            else {
+                                alert("Different Restaurant item")
+                            }
+
                         }
                         else {
                             alert("Already Added...")
