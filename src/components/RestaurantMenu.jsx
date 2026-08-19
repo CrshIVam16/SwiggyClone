@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeftStroke, ArrowRightStroke, ChevronDown, ChevronUp, Search, StarCircle, Star } from '@boxicons/react';
 import { CartContext } from '../context/contextApi';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../utils/cartSlice';
+import { addToCart, clearCart } from '../utils/cartSlice';
+import toast from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 // import fetch from 'node-fetch';
 // import { HttpsProxyAgent } from 'https-proxy-agent';
 
@@ -279,6 +281,8 @@ function DetailMenu({ itemCards, restaurantData }) {
 
                     // const { cartData, setCartData } = useContext(CartContext);
                     const cartData = useSelector((state) => state.cartSlice.cartItems)
+                    const [isDifferent, setIsDifferent] = useState(false)
+
                     const getRestaurantDataFromStorage = useSelector((state) => state.cartSlice.restaurantData)
                     const dispatch = useDispatch()
 
@@ -298,17 +302,31 @@ function DetailMenu({ itemCards, restaurantData }) {
                                 // localStorage.setItem("cartData", JSON.stringify([...cartData, info]))
                                 // localStorage.setItem("restaurantData", JSON.stringify(restaurantData))
                                 dispatch(addToCart({ info, restaurantData }))
+                                toast.success("Food added to the cart ")
                             }
                             else {
-                                alert("Different Restaurant item")
+                                // alert("Different Restaurant item")
+                                // toast.error("Different Restaurant item")
+                                handleisDifferent()
                             }
 
                         }
                         else {
-                            alert("Already Added...")
+                            // alert("Already Added...")
+                            toast.error("Already Added...")
                         }
                         // console.log(info);
                     }
+
+                    function handleisDifferent() {
+                        setIsDifferent((prev) => !prev)
+                    }
+
+                    function handleClearCart() {
+                        dispatch(clearCart())
+                        handleisDifferent()
+                    }
+
                     return (
 
                         <>
@@ -342,11 +360,24 @@ function DetailMenu({ itemCards, restaurantData }) {
                                 </div>
                             </div>
                             <hr className='my-4' />
+                            {
+                                isDifferent && (
+                                    <div className='w-130 h-50 left-135 bg-white fixed bottom-10 shadow-[0_0_12px_rgba(0,0,0,0.8)] p-6 z-50'>
+                                        <h1 className=' text-xl font-bold'>Items already in cart</h1>
+                                        <p className='text-sm text-black'>Your cart contains items from other restaurant. Would you like to reset your cart for adding items from this restaurant?</p>
+                                        <br />
+                                        <div className='w-full flex justify-between gap-8'>
+                                            <button onClick={handleisDifferent} className='cursor-pointer font-bold px-8 py-2 border-2 border-green-400 w-100/2 text-green-400 '>NO</button>
+                                            <button onClick={handleClearCart} className='cursor-pointer font-bold px-8 py-2 border-2 border-green-400 w-100/2 bg-green-400 text-white'>YES, START AFRESH</button>
+                                        </div>
+                                    </div >
+                                )
+                            }
                         </>
                     )
                 })
             }
-        </div>
+        </div >
     )
 }
 

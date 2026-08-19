@@ -3,6 +3,7 @@ import { CartContext } from "../context/contextApi"
 import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux";
 import { deleteItem, clearCart } from "../utils/cartSlice";
+import toast from "react-hot-toast";
 
 function Cart() {
 
@@ -26,6 +27,7 @@ function Cart() {
             // setCartData(newArr)
             dispatch(deleteItem(newArr))
             // localStorage.setItem("cartData", JSON.stringify(newArr))
+            toast.success("Food removed . . .")
         }
         else {
             handleClearCart()
@@ -34,6 +36,7 @@ function Cart() {
 
     function handleClearCart() {
         dispatch(clearCart())
+        toast.success("Your Cart has been cleared now . . .")
         // setCartData([])
         // localStorage.setItem("cartData", JSON.stringify([])) // or below one
         // localStorage.clear() // should be used when nothing needs to be remained like any credentials or something like that 

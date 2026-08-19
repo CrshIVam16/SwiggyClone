@@ -13,6 +13,7 @@ const cartSlice = createSlice({
 
             // setCartData(prev => [...prev, info]);
             state.cartItems = [...state.cartItems, info]
+            state.restaurantData = restaurantData
 
             localStorage.setItem("cartData", JSON.stringify(state.cartItems))
             localStorage.setItem("restaurantData", JSON.stringify(restaurantData))
@@ -23,6 +24,7 @@ const cartSlice = createSlice({
         },
         clearCart: (state) => {
             state.cartItems = [];
+            state.restaurantData = [];
             localStorage.removeItem("cartData");
             localStorage.removeItem("restaurantData");
         }
