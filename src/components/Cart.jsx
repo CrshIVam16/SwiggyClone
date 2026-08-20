@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { CartContext } from "../context/contextApi"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux";
 import { deleteItem, clearCart } from "../utils/cartSlice";
 import toast from "react-hot-toast";
@@ -10,6 +10,7 @@ function Cart() {
     // const { cartData, setCartData } = useContext(CartContext)
     // console.log(cartData)
 
+    const navigate = useNavigate()
     const cartData = useSelector((state) => state.cartSlice.cartItems)
     const dispatch = useDispatch()
 
@@ -34,12 +35,23 @@ function Cart() {
         }
     }
 
+    const userData = useSelector((state) => state.authSlice.userData)
+
     function handleClearCart() {
         dispatch(clearCart())
         toast.success("Your Cart has been cleared now . . .")
         // setCartData([])
         // localStorage.setItem("cartData", JSON.stringify([])) // or below one
         // localStorage.clear() // should be used when nothing needs to be remained like any credentials or something like that 
+    }
+
+    function handlePlaceOrder() {
+        if (!userData) {
+            toast.error("Please login first . . .")
+            navigate("/signIn")
+            return
+        }
+        toast.success("Order has been placed")
     }
 
     if (cartData.length === 0) {
@@ -61,7 +73,7 @@ function Cart() {
                         <div className="w-full flex justify-between items-center my-5 p-5">
                             <div className="flex flex-col gap-5">
                                 <h2 className="text-2xl font-semibold">{data.name}</h2>
-                                <h2>₹{(data.price) / 100 || (data.defaultPrice) / 100}</h2>
+                                <h2 className="text-black/50 font-bold">₹{(data.price) / 100 || (data.defaultPrice) / 100}</h2>
                             </div>
                             <div className='w-[20%] relative h-full'>
                                 <img className='rounded-xl aspect-square object-cover' src={`https://media-assets.swiggy.com/swiggy/image/upload/${data.imageId}`} alt="" />
@@ -70,8 +82,11 @@ function Cart() {
                         </div>
                     ))
                 }
-                <h1>Total : ₹{totalPrice}</h1>
-                <button onClick={handleClearCart} className="px-8 py-3 bg-red-400 text-white font-semibold rounded-xl cursor-pointer">Clear All</button>
+                <h1 className="text-xl font-semibold p-5">Total : ₹{totalPrice}</h1>
+                <div className="flex justify-between px-4">
+                    <button onClick={handlePlaceOrder} className="px-8 py-3 bg-green-400 text-white font-semibold rounded-xl cursor-pointer">Place Order</button>
+                    <button onClick={handleClearCart} className="px-8 py-3 bg-red-400 text-white font-semibold rounded-xl cursor-pointer">Clear All</button>
+                </div>
             </div>
         </div>
     )

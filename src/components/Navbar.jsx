@@ -17,6 +17,8 @@ function Navbar() {
 
     // const { cartData, setCartData } = useContext(CartContext);
     const cartData = useSelector((state) => state.cartSlice.cartItems)
+    const userData = useSelector((state) => state.authSlice.userData)
+
     const [searchResult, setSearchResult] = useState([]);
 
 
@@ -261,15 +263,26 @@ function Navbar() {
 
                     <div className="flex justify-around items-center font-semibold w-[70%]">
                         {dishes.map(({ name, image, id, path }) => (
-                            <Link to={path} key={id}>
-                                <p className="flex text-gray-600 gap-1">
-                                    {image} {name}
-                                    {name === "Cart" &&
-                                        <span>{cartData.length}</span>
-                                    }
-                                </p>
-
-                            </Link>
+                            name === "Sign In"
+                                ?
+                                <Link to={path} key={id}>
+                                    <p className="flex text-gray-600 gap-1">
+                                        {userData ? <img src={userData.photo} /> : image}
+                                        {userData ? userData.name : name}
+                                        {name === "Cart" &&
+                                            <span>{cartData.length}</span>
+                                        }
+                                    </p>
+                                </Link>
+                                :
+                                <Link to={path} key={id}>
+                                    <p className="flex text-gray-600 gap-1">
+                                        {image} {name}
+                                        {name === "Cart" &&
+                                            <span>{cartData.length}</span>
+                                        }
+                                    </p>
+                                </Link>
                         ))}
                     </div>
                 </div>

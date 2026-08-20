@@ -6,6 +6,7 @@ import RestaurantMenu from './components/RestaurantMenu'
 import { CartContext, Visibility } from './context/contextApi'
 import Cart from './components/Cart'
 import { useSelector } from 'react-redux'
+import SignInPage from './components/SignInPage'
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/" element={<Body />} />
             <Route path="/menu/:id" element={<RestaurantMenu />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/signin" element={<SignInPage />} />
             <Route path="*" element={<h1>Coming Soon...</h1>} />
           </Route>
         </Routes>

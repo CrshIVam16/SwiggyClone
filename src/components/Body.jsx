@@ -16,6 +16,8 @@ function Body() {
         const response = await fetch("https://cors-by-codethread-for-swiggy.vercel.app/cors/dapi/restaurants/list/v5?lat=26.953975&lng=80.985831&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
 
         const result = await response.json()
+        // console.log(result);
+        
 
 
         const val = result?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
@@ -27,7 +29,7 @@ function Body() {
         // console.log(val2);
         // console.log(val);
         // console.log(val2);
-        setTopRestaurantsData(val)
+        setTopRestaurantsData(val || [])
         setMindData(val2)
         setTopResTitle(result?.data?.cards[1]?.card?.card?.header?.title)
         setOnlineTitle(result?.data?.cards[2]?.card?.card?.title)
@@ -38,7 +40,7 @@ function Body() {
     }, [])
 
     const filterVal = useSelector((state => state.filterSlice.filterVal))
-    console.log(filterVal);
+    // console.log(filterVal);
 
     console.log(TopRestaurantsData);
 
