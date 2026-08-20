@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Mind from './Mind'
 import TopRestaurants from './TopRestaurants'
 import OnlineFoodDelivery from './OnlineFoodDelivery'
-import { Rss } from '@boxicons/react'
+import { useSelector } from 'react-redux';
 
 function Body() {
 
@@ -37,11 +37,29 @@ function Body() {
         fetchData()
     }, [])
 
+    const filterVal = useSelector((state => state.filterSlice.filterVal))
+    console.log(filterVal);
+
+    console.log(TopRestaurantsData);
+
+    const filteredData = TopRestaurantsData.filter((item) => {
+        if (!filterVal)
+            return true;
+
+        switch (filterVal) {
+            case "Ratings 4.0+": return item?.info?.avgRating > 4;
+            case "Offers": return item?.info?.aggregatedDiscountInfoV3?.header;
+            case "Rs. 300-Rs. 600": return item?.info?.costForTwo?.slice(1, 4) >= "300" && item?.info?.costForTwo?.slice(1, 4) <= "600";
+            case "Less then Rs. 300": return item?.info?.costForTwo?.slice(1, 4) <= "300";
+            default: return true;
+        }
+    })
+
     return (
         <div className='w-full flex flex-col items-center p-10'>
             <Mind data={MindData} />
             <TopRestaurants data={TopRestaurantsData} title={topResTitle} />
-            <OnlineFoodDelivery data={TopRestaurantsData} title={onlineTitle}/>
+            <OnlineFoodDelivery data={filterVal ? filteredData : TopRestaurantsData} title={onlineTitle} />
         </div>
     )
 }
