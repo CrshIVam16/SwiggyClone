@@ -6,7 +6,7 @@ import RestaurantMenu from './components/RestaurantMenu'
 import { CartContext, Visibility } from './context/contextApi'
 import Cart from './components/Cart'
 import { useSelector } from 'react-redux'
-import SignInPage from './components/SignInPage'
+import SignInPage from './components/SignInBtn'
 
 function App() {
 
@@ -15,6 +15,7 @@ function App() {
 
 
   const visible = useSelector((state => state.toggleSlice.searchBarToggle))
+  const loginVisible = useSelector((state) => state.toggleSlice.loginToggle)
 
   // function getDataFromLocalStorage() {
   //   let data = JSON.parse(localStorage.getItem("cartData")) || []
@@ -29,13 +30,12 @@ function App() {
     <>
       {/* <CartContext.Provider value={{ cartData, setCartData }}> */}
       {/* <Visibility.Provider value={{ visible, setVisible }}> */}
-      <div className={visible ? "max-h-screen overflow-hidden" : ""}>
+      <div className={visible || loginVisible ? "max-h-screen overflow-hidden" : ""}>
         <Routes>
           <Route path="/" element={<Navbar />}>
             <Route path="/" element={<Body />} />
             <Route path="/menu/:id" element={<RestaurantMenu />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/signin" element={<SignInPage />} />
             <Route path="*" element={<h1>Coming Soon...</h1>} />
           </Route>
         </Routes>

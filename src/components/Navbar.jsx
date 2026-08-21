@@ -3,7 +3,8 @@ import { Outlet, Link } from 'react-router-dom';
 import { CartPlus, ChevronDown, Discount, Handshake, Search, Shopify, ShoppingBag, User, X, Location } from '@boxicons/react';
 import { CartContext, Visibility } from '../context/contextApi';
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleSearchBar } from '../utils/toggleSlice';
+import { toggleLogin, toggleSearchBar } from '../utils/toggleSlice';
+import SignInBtn from './SignInBtn';
 
 function Navbar() {
 
@@ -13,6 +14,7 @@ function Navbar() {
 
     // access data form redux store using useSelector
     const visible = useSelector((state) => state.toggleSlice.searchBarToggle)
+    const loginVisible = useSelector((state) => state.toggleSlice.loginToggle)
     const dispatch = useDispatch()
 
     // const { cartData, setCartData } = useContext(CartContext);
@@ -197,6 +199,10 @@ function Navbar() {
         dispatch(toggleSearchBar())
     }
 
+    function handleLogin() {
+        dispatch(toggleLogin())
+    }
+
     async function searchResultFun(val) {
 
         // not working so harcoded goa data
@@ -207,8 +213,7 @@ function Navbar() {
     }
 
     return (
-        <div className="relative w-full">
-
+        <>
             <div className='w-full' >
                 <div onClick={handleVisibility} className={'w-full min-h-full bg-black/50 absolute z-30 ' + (visible ? "visible" : "invisible")}></div>
                 <div className={'w-[40%] h-full bg-white absolute p-5 z-50 duration-500 ' + (visible ? "left-0" : "-left-full")}>
@@ -241,55 +246,75 @@ function Navbar() {
                 </div>
             </div >
 
-
-            <div className="border-black p-5 shadow-xl sticky top-0 bg-white z-10">
-                <div className="w-[70%] border-black flex justify-between m-auto">
-                    <div className="flex gap-5 items-center">
-                        <Link to="/">
-                            <img
-                                className="w-15"
-                                src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fseeklogo.com%2Fimages%2FS%2Fswiggy-logo-8EF8260FA4-seeklogo.com.png&f=1&nofb=1&ipt=03d9c25a6d2338f06aa58d10bf40ab4de7d536788f6785ef1e90b9cf62beebed"
-                                alt=""
-                            />
-                        </Link>
-
-                        <p
-                            onClick={handleVisibility}
-                            className="flex underline underline-offset-5 decoration-2 font-bold cursor-pointer"
-                        >
-                            Other <ChevronDown className="text-orange-500 ml-3" />
-                        </p>
+            <div className='w-full' >
+                <div onClick={handleLogin} className={'w-full min-h-full bg-black/50 absolute z-30 ' + (loginVisible ? "visible" : "invisible")}></div>
+                <div className={'flex flex-col w-[40%] h-full bg-white absolute p-5 z-50 duration-500 ' + (loginVisible ? "right-0" : "-right-full")}>
+                    <div className='w-[65%]'>
+                        <p className='p-5 w-20 cursor-pointer' onClick={handleLogin}><X /></p>
                     </div>
-
-                    <div className="flex justify-around items-center font-semibold w-[70%]">
-                        {dishes.map(({ name, image, id, path }) => (
-                            name === "Sign In"
-                                ?
-                                <Link to={path} key={id}>
-                                    <p className="flex text-gray-600 gap-1">
-                                        {userData ? <img src={userData.photo} /> : image}
-                                        {userData ? userData.name : name}
-                                        {name === "Cart" &&
-                                            <span>{cartData.length}</span>
-                                        }
-                                    </p>
-                                </Link>
-                                :
-                                <Link to={path} key={id}>
-                                    <p className="flex text-gray-600 gap-1">
-                                        {image} {name}
-                                        {name === "Cart" &&
-                                            <span>{cartData.length}</span>
-                                        }
-                                    </p>
-                                </Link>
-                        ))}
+                    <div className='flex justify-between items-center-safe p-5 w-[65%]'>
+                        <h2 className='text-3xl font-semibold border-b-3 pb-4'>Login</h2>
+                        <img className='w-30' src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_145,h_140/Image-login_btpq7r" alt="" />
+                    </div>
+                    <div className='w-[65%] flex flex-col gap-2 justify-center'>
+                        {/* <button className='cursor-pointer px-8 py-3 rounded-xl border bg-orange-400 text-white font-semibold'>Login with google</button> */}
+                        <SignInBtn />
+                        <p className='text-xs font-semibold'>
+                            <span className='text-black/70'>By clicking on Login, I accept the </span>
+                            Terms & Conditions & Privacy Policy</p>
                     </div>
                 </div>
-            </div>
+            </div >
 
-            <Outlet />
-        </div >
+            <div className="relative w-full">
+                <div className="border-black p-5 shadow-xl sticky top-0 bg-white z-10">
+                    <div className="w-[70%] border-black flex justify-between m-auto">
+                        <div className="flex gap-5 items-center">
+                            <Link to="/">
+                                <img
+                                    className="w-15"
+                                    src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fseeklogo.com%2Fimages%2FS%2Fswiggy-logo-8EF8260FA4-seeklogo.com.png&f=1&nofb=1&ipt=03d9c25a6d2338f06aa58d10bf40ab4de7d536788f6785ef1e90b9cf62beebed"
+                                    alt=""
+                                />
+                            </Link>
+
+                            <p
+                                onClick={handleVisibility}
+                                className="flex underline underline-offset-5 decoration-2 font-bold cursor-pointer"
+                            >
+                                Other <ChevronDown className="text-orange-500 ml-3" />
+                            </p>
+                        </div>
+
+                        <div className="flex justify-around items-center font-semibold w-[70%]">
+                            {dishes.map(({ name, image, id, path }) => (
+                                name === "Sign In"
+                                    ?
+                                    <div onClick={handleLogin} key={id}>
+                                        <p className="flex text-gray-600 gap-1 justify-center items-center">
+                                            {userData ? <img className='w-10 rounded-[50%]' src={userData.photo} /> : image}
+                                            {userData ? userData.name : name}
+                                            {name === "Cart" &&
+                                                <span>{cartData.length}</span>
+                                            }
+                                        </p>
+                                    </div>
+                                    :
+                                    <Link to={path} key={id}>
+                                        <p className="flex text-gray-600 gap-1">
+                                            {image} {name}
+                                            {name === "Cart" &&
+                                                <span>{cartData.length}</span>
+                                            }
+                                        </p>
+                                    </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <Outlet />
+            </div >
+        </>
     );
 
 }

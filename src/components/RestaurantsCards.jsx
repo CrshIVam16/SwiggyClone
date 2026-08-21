@@ -11,7 +11,7 @@ function RestaurantsCards(info) {  //can be used when passing done like {...info
 
     // console.log(info.link.split("/"));
     // console.log(info.link.split("/").at(-1));
-    
+
     return (
         <Link to={`/menu/${info.link.split("/").at(-1)}`}>
             <div className=" min-w-75 h-45 relative">
@@ -46,7 +46,8 @@ function RestaurantsCards(info) {  //can be used when passing done like {...info
                 </div>
                 <p className='line-clamp-1'>{info?.cuisines.join(", ")}</p>
                 <p className='line-clamp-1'>{info?.locality}</p>
-            </div></Link>
+            </div>
+        </Link>
     )
 }
 

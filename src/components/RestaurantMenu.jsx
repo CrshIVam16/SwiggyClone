@@ -5,9 +5,6 @@ import { CartContext } from '../context/contextApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, clearCart } from '../utils/cartSlice';
 import toast from 'react-hot-toast';
-import { Toaster } from "react-hot-toast";
-// import fetch from 'node-fetch';
-// import { HttpsProxyAgent } from 'https-proxy-agent';
 
 
 function RestaurantMenu() {
@@ -57,10 +54,9 @@ function RestaurantMenu() {
         setDiscountData(cards[3]?.card?.card?.gridElements?.infoWithStyle?.offers || []);
         // setMenuData(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.[1]?.card?.card?.itemCards || []);
         // console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards)
-        let actualMenu = (cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter((data) => (data?.card?.card?.itemCards) || (data?.card?.card?.categories))
+        let actualMenu = (cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards ?? []).filter((data) => (data?.card?.card?.itemCards) || (data?.card?.card?.categories))
         setMenuData(actualMenu);
         // console.log(cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[0]);
-
     }
 
 

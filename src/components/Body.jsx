@@ -42,7 +42,7 @@ function Body() {
     const filterVal = useSelector((state => state.filterSlice.filterVal))
     // console.log(filterVal);
 
-    console.log(TopRestaurantsData);
+    // console.log(TopRestaurantsData);
 
     const filteredData = TopRestaurantsData.filter((item) => {
         if (!filterVal)
